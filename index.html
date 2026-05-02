@@ -1,277 +1,523 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Admin Toko Mas Merysa - Control Panel</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Toko Mas Merysa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#D4AF37">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<style>
-:root {
-    --gold: #D4AF37;
-    --dark: #121212;
-}
+    
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-gradient: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
+            --dark: #0a0a0a;
+            --dark-card: #1a1a1a;
+            --text: #ffffff;
+            --text-muted: #b0b0b0;
+            --glass: rgba(255,255,255,0.08);
+            --border: rgba(212,175,55,0.3);
+            --shadow: 0 10px 40px rgba(0,0,0,0.4);
+            --shadow-gold: 0 10px 40px rgba(212,175,55,0.25);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-/* RESET & GLOBAL */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--dark);
-    color: white;
-    margin: 0;
-    padding: 20px;
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
 
-/* CONTAINER */
-.container {
-    max-width: 800px;
-    margin: auto;
-}
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(212,175,55,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(212,175,55,0.05) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
 
-/* CARD */
-.card {
-    background: #222;
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid var(--gold);
-    margin-bottom: 20px;
-}
+        /* ===== LOGIN OVERLAY ===== */
+        #loginOverlay {
+            background: var(--dark-card);
+            padding: 40px;
+            border-radius: 25px;
+            border: 1px solid var(--border);
+            text-align: center;
+            box-shadow: var(--shadow-gold);
+            max-width: 450px;
+            margin: 80px auto;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.5s ease;
+        }
 
-/* HEADING */
-h2, h3 {
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #333;
-    padding-bottom: 10px;
-}
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-/* LABEL */
-label {
-    display: block;
-    margin: 10px 0 5px;
-    color: #aaa;
-    font-size: 14px;
-}
+        #loginOverlay i {
+            font-size: 3.5rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
 
-/* INPUT */
-input[type="text"],
-input[type="password"],
-input {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    background: #333;
-    border: 1px solid #444;
-    color: white;
-    border-radius: 5px;
-    box-sizing: border-box;
-}
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
-/* BUTTON GLOBAL */
-button {
-    background: var(--gold);
-    color: black;
-    border: none;
-    padding: 12px 20px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
-    width: 100%;
-}
+        #loginOverlay h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
 
-button:hover {
-    background: #f1c40f;
-}
+        #loginOverlay p { color: var(--text-muted); margin-bottom: 25px; }
 
-/* CUSTOM BUTTON */
-.btn {
-    padding: 12px 20px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 10px;
-    transition: 0.3s;
-}
+        #passInput {
+            width: 100%;
+            padding: 15px 20px;
+            margin: 10px 0 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
 
-.btn-gold {
-    background: var(--gold);
-    color: black;
-    width: 100%;
-}
+        #passInput:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.2);
+        }
 
-.btn-gold:hover {
-    background: #f1c40f;
-}
+        /* ===== BUTTONS ===== */
+        button {
+            background: var(--gold-gradient);
+            color: #0a0a0a;
+            border: none;
+            padding: 14px 28px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            width: 100%;
+            margin-top: 5px;
+        }
 
-.btn-red {
-    background: #e74c3c;
-    color: white;
-    padding: 5px 10px;
-    width: auto;
-}
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-gold);
+            filter: brightness(1.1);
+        }
 
-.btn-blue {
-    background: #3498db;
-    color: white;
-    padding: 5px 10px;
-    width: auto;
-}
+        button:active { transform: translateY(0); }
 
-/* PRODUCT */
-.product-item {
-    background: #333;
-    padding: 15px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
+        .btn-red {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .btn-blue {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+        }
+        
+        .btn-outline:hover {
+            background: var(--gold);
+            color: #0a0a0a;
+        }
 
-.product-item img {
-    height: 60px;
-    width: 60px;
-    object-fit: cover;
-    border-radius: 5px;
-    border: 1px solid var(--gold);
-}
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            width: auto;
+            margin: 0 5px;
+        }
 
-.info {
-    flex-grow: 1;
-    margin-left: 15px;
-}
+        /* ===== ADMIN PANEL ===== */
+        #adminPanel {
+            display: none;
+            max-width: 900px;
+            margin: 0 auto;
+            animation: slideUp 0.5s ease;
+        }
 
-/* LOGIN OVERLAY */
-#loginOverlay {
-    background: #1a1a1a;
-    padding: 30px;
-    border-radius: 15px;
-    border: 1px solid var(--gold);
-    text-align: center;
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
-    max-width: 400px;
-    margin: 50px auto;
-}
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ADMIN PANEL */
-#adminPanel {
-    display: none;
-    width: 90%;
-    max-width: 600px;
-    background: #1a1a1a;
-    padding: 40px;
-    border-radius: 15px;
-    margin: auto;
-}
+        .header-admin {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+        }
 
-/* HEADER ADMIN */
-.header-admin {
-    border-bottom: 1px solid var(--gold);
-    padding-bottom: 15px;
-    margin-bottom: 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        .header-admin h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-/* LOGOUT */
-.logout-btn {
-    background: #ff4444;
-    color: white;
-    padding: 5px 15px;
-    font-size: 12px;
-    width: auto;
-}
-</style>
+        .logout-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            width: auto;
+            border-radius: 10px;
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--dark-card);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            border-color: var(--gold);
+            box-shadow: var(--shadow-gold);
+        }
+
+        .card h2, .card h3 {
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 1.4rem;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 8px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 14px 18px;
+            margin: 8px 0;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.2);
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .file-preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .file-preview img,
+        .file-preview video {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            margin-top: 10px;
+        }
+
+        /* ===== PRODUCT LIST ===== */
+        .product-item {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .product-item:hover {
+            border-color: var(--gold);
+            background: rgba(212,175,55,0.08);
+        }
+
+        .product-item .media {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .product-item img,
+        .product-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-item .info {
+            flex-grow: 1;
+            margin-left: 15px;
+            min-width: 0;
+        }
+
+        .product-item .info strong {
+            display: block;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-item .type-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .type-badge.photo { background: rgba(52,152,219,0.2); color: #3498db; }
+        .type-badge.video { background: rgba(231,76,60,0.2); color: #e74c3c; }
+
+        .product-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        /* ===== TOAST NOTIFICATION ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark-card);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            border-left: 4px solid var(--gold);
+            box-shadow: var(--shadow);
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+            max-width: 350px;
+        }
+
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateX(100%); } }
+
+        .toast i { font-size: 1.3rem; color: var(--gold); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body { padding: 15px; }
+            #loginOverlay { margin: 40px 15px; padding: 30px 25px; }
+            .header-admin { flex-direction: column; gap: 15px; text-align: center; }
+            .product-item { flex-direction: column; text-align: center; gap: 15px; }
+            .product-item .info { margin-left: 0; }
+            .product-actions { justify-content: center; }
+        }
+    </style>
 </head>
 <body>
 
+    <!-- LOGIN -->
     <div id="loginOverlay">
-        <i class="fas fa-user-shield" style="font-size: 3rem; color: var(--gold); margin-bottom: 15px;"></i>
+        <i class="fas fa-user-shield"></i>
         <h2>Admin Merysa</h2>
-        <p>Silahkan masukkan password akses</p>
-        <input type="password" id="passInput" placeholder="Password Admin">
-        <button onclick="checkLogin()">MASUK SISTEM</button>
-        <p id="errorMsg" style="color: #ff4444; margin-top: 10px; display: none;">Password Salah!</p>
+        <p>Masukkan password untuk mengakses panel kontrol</p>
+        <input type="password" id="passInput" placeholder="••••••" maxlength="20">
+        <button onclick="checkLogin()"><i class="fas fa-sign-in-alt"></i> Masuk Sistem</button>
+        <p id="errorMsg" style="color: #ff6b6b; margin-top: 15px; display: none; font-weight: 500;">
+            <i class="fas fa-exclamation-circle"></i> Password Salah!
+        </p>
     </div>
 
+    <!-- ADMIN PANEL -->
     <div id="adminPanel">
         <div class="header-admin">
-            <h3><i class="fas fa-cog"></i> Pengaturan Toko</h3>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+            <h3><i class="fas fa-crown"></i> Control Panel</h3>
+            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </div>
      
-<div class="container">
-    <div class="card">
-        <h2>Tampilan Website (Logo & BG)</h2>
-        <label>Ganti Logo Toko:</label>
-        <input type="file" id="upLogo" accept="image/*">
-        
-        <label>Ganti Background Website:</label>
-        <input type="file" id="upBG" accept="image/*">
-        
-        <button class="btn btn-gold" onclick="updateTampilan()">Simpan Perubahan Tampilan</button>
+        <div class="card">
+            <h2><i class="fas fa-palette"></i> Tampilan Website</h2>
+            <label><i class="fas fa-image"></i> Ganti Logo Toko:</label>
+            <input type="file" id="upLogo" accept="image/*">
+            <div class="file-preview" id="logoPreview"></div>
+            
+            <label style="margin-top: 20px;"><i class="fas fa-wallpaper"></i> Ganti Background:</label>
+            <input type="file" id="upBG" accept="image/*">
+            <div class="file-preview" id="bgPreview"></div>
+            
+            <button class="btn-gold" onclick="updateTampilan()" style="margin-top: 20px;">
+                <i class="fas fa-save"></i> Simpan Perubahan
+            </button>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-coins"></i> Harga Emas</h2>
+            <label>Harga Per Gram Hari Ini:</label>
+            <input type="text" id="hargaEmas" placeholder="Contoh: Rp 2.650.000 / gram">
+            <button onclick="updateHarga()" style="margin-top: 15px;">
+                <i class="fas fa-sync-alt"></i> Update Harga
+            </button>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-plus-circle"></i> Tambah Produk / Konten</h3>
+            
+            <label>Tipe Konten:</label>
+            <select id="tipeKonten" onchange="toggleMediaInput()">
+                <option value="photo">📷 Foto Produk</option>
+                <option value="video">🎬 Video Gallery</option>
+            </select>
+            
+            <input type="hidden" id="editKey">
+            
+            <label>Nama Produk / Judul:</label>
+            <input type="text" id="namaProduk" placeholder="Contoh: Cincin Berlian 18K">
+            
+            <label id="labelMedia">File Foto:</label>
+            <input type="file" id="mediaFile" accept="image/*,video/*">
+            <div class="file-preview" id="mediaPreview"></div>
+            
+            <label id="labelUrl" style="display: none;">URL Video (Opsional):</label>
+            <input type="text" id="urlVideo" placeholder="https://..." style="display: none;">
+            
+            <label>Harga (Opsional):</label>
+            <input type="text" id="hargaProduk" placeholder="Contoh: Rp 5.500.000">
+            
+            <button id="btnSave" onclick="saveProduct()" style="margin-top: 20px;">
+                <i class="fas fa-save"></i> Simpan Konten
+            </button>
+            <button id="btnCancel" class="btn-outline" style="display:none; margin-top: 10px;" onclick="resetForm()">
+                <i class="fas fa-times"></i> Batal
+            </button>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-list"></i> Daftar Konten Aktif</h3>
+            <div id="listProduk" style="max-height: 500px; overflow-y: auto; padding-right: 10px;"></div>
+        </div>
     </div>
 
-    <div class="card">
-        <h2>Harga Emas</h2>
-        <label>Harga Hari Ini:</label>
-        <input type="text" id="hargaEmas" placeholder="Contoh: Rp 2.650.000 / gram">
-        <button class="btn btn-gold" onclick="updateHarga()">Update Harga</button>
-    </div>
+    <!-- TOAST CONTAINER -->
+    <div id="toastContainer"></div>
 
-    <div class="card">
-        <h3>Kelola Produk</h3>
-        <input type="hidden" id="editKey">
-        <label>Nama Produk:</label>
-        <input type="text" id="namaProduk" placeholder="Contoh: Cincin Berlian">
-        <label>Foto Produk:</label>
-        <input type="file" id="fotoProduk" accept="image/*">
-        <button id="btnSave" class="btn btn-gold" onclick="saveProduct()">Simpan Produk</button>
-        <button id="btnCancel" class="btn" style="display:none; background:#555; color:white; width:100%;" onclick="resetForm()">Batal</button>
-    </div>
-
-    <div class="card">
-        <h3>Daftar Produk di Website</h3>
-        <div id="listProduk"></div>
-    </div>
-</div>
-</div>
- <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <!-- FIREBASE -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
- <script> // 1. KONFIGURASI (Ganti dengan milik Anda)
-        const ADMIN_PASSWORD = "MerysaPekanbaru686868"; // GANTI PASSWORD DI SINI
-    // --- KONFIGURASI FIREBASE ANDA ---
-    const firebaseConfig = {
+    <script>
+        // ===== KONFIGURASI =====
+        const ADMIN_PASSWORD = "MerysaPekanbaru1986"; // ⚠️ GANTI PASSWORD INI!
+        
+        const firebaseConfig = {
         apiKey: "AIzaSyCi-CNKPGkeUuc7WBCizkQlLO9DT2cXJAk",
         authDomain: "tokomasmerysa.firebaseapp.com",
         databaseURL: "https://tokomasmerysa-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "tokomasmerysa",
         appId: "1:659517947527:web:4ed83fc9f6206b45ef0222"
     };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+        
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
 
-    const toBase64 = file => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-            // LOGIKA LOGIN
+        // ===== UTILS =====
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+        });
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function previewFile(input, previewId, isVideo = false) {
+            const file = input.files[0];
+            const preview = document.getElementById(previewId);
+            if (!file) { preview.innerHTML = ''; return; }
+            
+            const url = URL.createObjectURL(file);
+            preview.innerHTML = isVideo || file.type.startsWith('video/') 
+                ? `<video src="${url}" controls muted style="max-height: 150px;"></video>`
+                : `<img src="${url}" alt="Preview" style="max-height: 150px;">`;
+        }
+
+        // ===== LOGIN LOGIC =====
         function checkLogin() {
             const input = document.getElementById("passInput").value;
             if (input === ADMIN_PASSWORD) {
                 sessionStorage.setItem("isAdmin", "true");
                 showPanel();
+                showToast('Selamat datang, Admin! ✨');
             } else {
                 document.getElementById("errorMsg").style.display = "block";
+                setTimeout(() => {
+                    document.getElementById("errorMsg").style.display = "none";
+                }, 3000);
             }
         }
 
@@ -281,7 +527,6 @@ button:hover {
             loadCurrentData();
         }
 
-        // Cek apakah sudah login sebelumnya
         if (sessionStorage.getItem("isAdmin") === "true") {
             showPanel();
         }
@@ -289,94 +534,197 @@ button:hover {
         function logout() {
             sessionStorage.clear();
             window.location.reload();
+            showToast('Anda telah logout 👋');
         }
 
-    // 1. UPDATE LOGO & BACKGROUND
-    async function updateTampilan() {
-        const logoFile = document.getElementById('upLogo').files[0];
-        const bgFile = document.getElementById('upBG').files[0];
-        let updates = {};
-
-        if(logoFile) updates['logo'] = await toBase64(logoFile);
-        if(bgFile) updates['bg'] = await toBase64(bgFile);
-
-        if(Object.keys(updates).length > 0) {
-            db.ref('toko_mas/config').update(updates);
-            alert("Tampilan Berhasil Diperbarui!");
-        } else {
-            alert("Pilih file terlebih dahulu!");
-        }
-    }
-
-    // 2. UPDATE HARGA
-    function updateHarga() {
-        const harga = document.getElementById('hargaEmas').value;
-        if(harga) {
-            db.ref('toko_mas/config').update({ harga: harga });
-            alert("Harga Berhasil Diperbarui!");
-        }
-    }
-
-    // 3. KELOLA PRODUK (CRUD)
-    async function saveProduct() {
-        const key = document.getElementById('editKey').value;
-        const nama = document.getElementById('namaProduk').value;
-        const file = document.getElementById('fotoProduk').files[0];
-        
-        let data = { nama: nama };
-
-        if(file) {
-            data.foto = await toBase64(file);
+        // ===== TOGGLE MEDIA INPUT =====
+        function toggleMediaInput() {
+            const tipe = document.getElementById('tipeKonten').value;
+            const isVideo = tipe === 'video';
+            
+            document.getElementById('labelMedia').innerHTML = isVideo ? 
+                '<i class="fas fa-video"></i> File Video:' : 
+                '<i class="fas fa-image"></i> File Foto:';
+            document.getElementById('mediaFile').accept = isVideo ? 'video/*' : 'image/*';
+            
+            document.getElementById('labelUrl').style.display = isVideo ? 'block' : 'none';
+            document.getElementById('urlVideo').style.display = isVideo ? 'block' : 'none';
         }
 
-        if(key) { // Mode Edit
-            db.ref('toko_mas/produk/' + key).update(data);
-            alert("Produk Diperbarui!");
-        } else { // Mode Tambah
-            if(!file) return alert("Pilih foto untuk produk baru!");
-            db.ref('toko_mas/produk').push(data);
-            alert("Produk Ditambahkan!");
-        }
-        resetForm();
-    }
-
-    db.ref('toko_mas/produk').on('value', (snapshot) => {
-        const listDiv = document.getElementById('listProduk');
-        listDiv.innerHTML = "";
-        snapshot.forEach((child) => {
-            const item = child.val();
-            listDiv.innerHTML += `
-                <div class="product-item">
-                    <img src="${item.foto}">
-                    <div class="info"><strong>${item.nama}</strong></div>
-                    <div>
-                        <button class="btn btn-blue" onclick="editMode('${child.key}', '${item.nama}')">Edit</button>
-                        <button class="btn btn-red" onclick="deleteProduct('${child.key}')">Hapus</button>
-                    </div>
-                </div>`;
+        // Preview handler
+        document.getElementById('upLogo').addEventListener('change', (e) => previewFile(e.target, 'logoPreview'));
+        document.getElementById('upBG').addEventListener('change', (e) => previewFile(e.target, 'bgPreview'));
+        document.getElementById('mediaFile').addEventListener('change', (e) => {
+            const isVideo = document.getElementById('tipeKonten').value === 'video';
+            previewFile(e.target, 'mediaPreview', isVideo);
         });
-    });
 
-    function deleteProduct(key) {
-        if(confirm("Hapus produk ini?")) db.ref('toko_mas/produk/' + key).remove();
-    }
+        // ===== UPDATE FUNCTIONS =====
+        async function updateTampilan() {
+            const logoFile = document.getElementById('upLogo').files[0];
+            const bgFile = document.getElementById('upBG').files[0];
+            let updates = {};
 
-    function editMode(key, nama) {
-        document.getElementById('editKey').value = key;
-        document.getElementById('namaProduk').value = nama;
-        document.getElementById('btnSave').innerText = "Update Produk";
-        document.getElementById('btnCancel').style.display = "block";
-    }
+            if(logoFile) {
+                showToast('Mengupload logo...');
+                updates['logo'] = await toBase64(logoFile);
+            }
+            if(bgFile) {
+                showToast('Mengupload background...');
+                updates['bg'] = await toBase64(bgFile);
+            }
 
-    function resetForm() {
-        document.getElementById('editKey').value = "";
-        document.getElementById('namaProduk').value = "";
-        document.getElementById('fotoProduk').value = "";
-        document.getElementById('btnSave').innerText = "Simpan Produk";
-        document.getElementById('btnCancel').style.display = "none";
-    }
-    
-    // ==========================================
+            if(Object.keys(updates).length > 0) {
+                await db.ref('toko_mas/config').update(updates);
+                showToast('Tampilan berhasil diperbarui! ✨', 'success');
+            } else {
+                showToast('Pilih file terlebih dahulu!', 'error');
+            }
+        }
+
+        function updateHarga() {
+            const harga = document.getElementById('hargaEmas').value.trim();
+            if(harga) {
+                db.ref('toko_mas/config').update({ harga: harga });
+                showToast('Harga emas berhasil diupdate! 💰');
+            } else {
+                showToast('Masukkan harga terlebih dahulu!', 'error');
+            }
+        }
+
+        // ===== PRODUCT CRUD =====
+        async function saveProduct() {
+            const key = document.getElementById('editKey').value;
+            const nama = document.getElementById('namaProduk').value.trim();
+            const tipe = document.getElementById('tipeKonten').value;
+            const file = document.getElementById('mediaFile').files[0];
+            const urlVideo = document.getElementById('urlVideo').value.trim();
+            const harga = document.getElementById('hargaProduk').value.trim();
+            
+            if(!nama) return showToast('Nama produk wajib diisi!', 'error');
+            
+            let data = { 
+                nama: nama, 
+                tipe: tipe,
+                harga: harga || null,
+                updated: Date.now()
+            };
+
+            if(urlVideo && tipe === 'video') {
+                data.url_video = urlVideo;
+            }
+            
+            if(file) {
+                showToast('Mengupload media...');
+                data.foto = await toBase64(file); // Base64 untuk demo
+                // ⚠️ Untuk produksi: Gunakan Firebase Storage untuk video besar!
+            } else if (!key && !urlVideo) {
+                return showToast('Pilih file media atau masukkan URL video!', 'error');
+            }
+
+            try {
+                if(key) {
+                    await db.ref('toko_mas/produk/' + key).update(data);
+                    showToast('Konten berhasil diperbarui! ✏️');
+                } else {
+                    await db.ref('toko_mas/produk').push(data);
+                    showToast('Konten baru berhasil ditambahkan! 🎉');
+                }
+                resetForm();
+            } catch (error) {
+                console.error(error);
+                showToast('Gagal menyimpan: ' + error.message, 'error');
+            }
+        }
+
+        // ===== LOAD & RENDER PRODUCTS =====
+        function loadCurrentData() {
+            // Load config
+            db.ref('toko_mas/config').once('value').then(snapshot => {
+                const config = snapshot.val();
+                if(config?.harga) document.getElementById('hargaEmas').value = config.harga;
+            });
+            
+            // Load products
+            db.ref('toko_mas/produk').on('value', (snapshot) => {
+                const listDiv = document.getElementById('listProduk');
+                listDiv.innerHTML = "";
+                
+                if(!snapshot.exists()) {
+                    listDiv.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:20px;">Belum ada konten. Tambahkan yang pertama! 🚀</p>';
+                    return;
+                }
+                
+                snapshot.forEach((child) => {
+                    const item = child.val();
+                    const isVideo = item.tipe === 'video' || item.foto?.includes('video') || item.url_video;
+                    const mediaPreview = isVideo 
+                        ? (item.url_video ? `<video src="${item.url_video}" muted style="height:60px; border-radius:8px;"></video>` 
+                                           : `<video src="${item.foto}" muted style="height:60px; border-radius:8px;"></video>`)
+                        : `<img src="${item.foto}" style="height:60px; border-radius:8px; object-fit:cover;">`;
+                    
+                    listDiv.innerHTML += `
+                        <div class="product-item">
+                            <div class="media">${mediaPreview}</div>
+                            <div class="info">
+                                <strong>${item.nama}</strong>
+                                ${item.harga ? `<small style="color:var(--gold)">${item.harga}</small>` : ''}
+                                <span class="type-badge ${isVideo ? 'video' : 'photo'}">
+                                    <i class="fas fa-${isVideo ? 'video' : 'image'}"></i> ${isVideo ? 'Video' : 'Foto'}
+                                </span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn-blue btn-sm" onclick="editMode('${child.key}', '${item.nama.replace(/'/g, "\\'")}', '${item.tipe}', '${item.harga || ''}', '${item.url_video || ''}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-red btn-sm" onclick="deleteProduct('${child.key}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>`;
+                });
+            });
+        }
+
+        function deleteProduct(key) {
+            if(confirm("Hapus konten ini secara permanen?")) {
+                db.ref('toko_mas/produk/' + key).remove();
+                showToast('Konten berhasil dihapus 🗑️');
+            }
+        }
+
+        function editMode(key, nama, tipe, harga, urlVideo) {
+            document.getElementById('editKey').value = key;
+            document.getElementById('namaProduk').value = nama;
+            document.getElementById('tipeKonten').value = tipe;
+            document.getElementById('hargaProduk').value = harga;
+            document.getElementById('urlVideo').value = urlVideo;
+            toggleMediaInput();
+            
+            document.getElementById('btnSave').innerHTML = '<i class="fas fa-sync-alt"></i> Update Konten';
+            document.getElementById('btnCancel').style.display = "block";
+            document.getElementById('labelMedia').scrollIntoView({behavior: 'smooth'});
+        }
+
+        function resetForm() {
+            document.getElementById('editKey').value = "";
+            document.getElementById('namaProduk').value = "";
+            document.getElementById('mediaFile').value = "";
+            document.getElementById('hargaProduk').value = "";
+            document.getElementById('urlVideo').value = "";
+            document.getElementById('mediaPreview').innerHTML = "";
+            document.getElementById('tipeKonten').value = "photo";
+            toggleMediaInput();
+            
+            document.getElementById('btnSave').innerHTML = '<i class="fas fa-save"></i> Simpan Konten';
+            document.getElementById('btnCancel').style.display = "none";
+        }
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleMediaInput();
+        });
+            // ==========================================
 // REGISTER SERVICE WORKER
 // ==========================================
 if ('servic-eWorker' in navigator) {
@@ -604,6 +952,6 @@ if ('serviceWorker' in navigator && navigator.onLine) {
 }
 
 console.log('[PWA] Toko Mas Merysa PWA Ready');
-</script>
+    </script>
 </body>
 </html>
