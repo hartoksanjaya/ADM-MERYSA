@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Toko Mas Merysa - Control Panel</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#D4AF37">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<style>
+:root {
+    --gold: #D4AF37;
+    --dark: #121212;
+}
+
+/* RESET & GLOBAL */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--dark);
+    color: white;
+    margin: 0;
+    padding: 20px;
+}
+
+/* CONTAINER */
+.container {
+    max-width: 800px;
+    margin: auto;
+}
+
+/* CARD */
+.card {
+    background: #222;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--gold);
+    margin-bottom: 20px;
+}
+
+/* HEADING */
+h2, h3 {
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+/* LABEL */
+label {
+    display: block;
+    margin: 10px 0 5px;
+    color: #aaa;
+    font-size: 14px;
+}
+
+/* INPUT */
+input[type="text"],
+input[type="password"],
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    background: #333;
+    border: 1px solid #444;
+    color: white;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* BUTTON GLOBAL */
+button {
+    background: var(--gold);
+    color: black;
+    border: none;
+    padding: 12px 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100%;
+}
+
+button:hover {
+    background: #f1c40f;
+}
+
+/* CUSTOM BUTTON */
+.btn {
+    padding: 12px 20px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.btn-gold {
+    background: var(--gold);
+    color: black;
+    width: 100%;
+}
+
+.btn-gold:hover {
+    background: #f1c40f;
+}
+
+.btn-red {
+    background: #e74c3c;
+    color: white;
+    padding: 5px 10px;
+    width: auto;
+}
+
+.btn-blue {
+    background: #3498db;
+    color: white;
+    padding: 5px 10px;
+    width: auto;
+}
+
+/* PRODUCT */
+.product-item {
+    background: #333;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.product-item img {
+    height: 60px;
+    width: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid var(--gold);
+}
+
+.info {
+    flex-grow: 1;
+    margin-left: 15px;
+}
+
+/* LOGIN OVERLAY */
+#loginOverlay {
+    background: #1a1a1a;
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid var(--gold);
+    text-align: center;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+    max-width: 400px;
+    margin: 50px auto;
+}
+
+/* ADMIN PANEL */
+#adminPanel {
+    display: none;
+    width: 90%;
+    max-width: 600px;
+    background: #1a1a1a;
+    padding: 40px;
+    border-radius: 15px;
+    margin: auto;
+}
+
+/* HEADER ADMIN */
+.header-admin {
+    border-bottom: 1px solid var(--gold);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* LOGOUT */
+.logout-btn {
+    background: #ff4444;
+    color: white;
+    padding: 5px 15px;
+    font-size: 12px;
+    width: auto;
+}
+</style>
+</head>
+<body>
+
+    <div id="loginOverlay">
+        <i class="fas fa-user-shield" style="font-size: 3rem; color: var(--gold); margin-bottom: 15px;"></i>
+        <h2>Admin Merysa</h2>
+        <p>Silahkan masukkan password akses</p>
+        <input type="password" id="passInput" placeholder="Password Admin">
+        <button onclick="checkLogin()">MASUK SISTEM</button>
+        <p id="errorMsg" style="color: #ff4444; margin-top: 10px; display: none;">Password Salah!</p>
+    </div>
+
+    <div id="adminPanel">
+        <div class="header-admin">
+            <h3><i class="fas fa-cog"></i> Pengaturan Toko</h3>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+     
+<div class="container">
+    <div class="card">
+        <h2>Tampilan Website (Logo & BG)</h2>
+        <label>Ganti Logo Toko:</label>
+        <input type="file" id="upLogo" accept="image/*">
+        
+        <label>Ganti Background Website:</label>
+        <input type="file" id="upBG" accept="image/*">
+        
+        <button class="btn btn-gold" onclick="updateTampilan()">Simpan Perubahan Tampilan</button>
+    </div>
+
+    <div class="card">
+        <h2>Harga Emas</h2>
+        <label>Harga Hari Ini:</label>
+        <input type="text" id="hargaEmas" placeholder="Contoh: Rp 2.650.000 / gram">
+        <button class="btn btn-gold" onclick="updateHarga()">Update Harga</button>
+    </div>
+
+    <div class="card">
+        <h3>Kelola Produk</h3>
+        <input type="hidden" id="editKey">
+        <label>Nama Produk:</label>
+        <input type="text" id="namaProduk" placeholder="Contoh: Cincin Berlian">
+        <label>Foto Produk:</label>
+        <input type="file" id="fotoProduk" accept="image/*">
+        <button id="btnSave" class="btn btn-gold" onclick="saveProduct()">Simpan Produk</button>
+        <button id="btnCancel" class="btn" style="display:none; background:#555; color:white; width:100%;" onclick="resetForm()">Batal</button>
+    </div>
+
+    <div class="card">
+        <h3>Daftar Produk di Website</h3>
+        <div id="listProduk"></div>
+    </div>
+</div>
+</div>
+ <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+ <script> // 1. KONFIGURASI (Ganti dengan milik Anda)
+        const ADMIN_PASSWORD = "MerysaPekanbaru686868"; // GANTI PASSWORD DI SINI
+    // --- KONFIGURASI FIREBASE ANDA ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyCi-CNKPGkeUuc7WBCizkQlLO9DT2cXJAk",
+        authDomain: "tokomasmerysa.firebaseapp.com",
+        databaseURL: "https://tokomasmerysa-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "tokomasmerysa",
+        appId: "1:659517947527:web:4ed83fc9f6206b45ef0222"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+            // LOGIKA LOGIN
+        function checkLogin() {
+            const input = document.getElementById("passInput").value;
+            if (input === ADMIN_PASSWORD) {
+                sessionStorage.setItem("isAdmin", "true");
+                showPanel();
+            } else {
+                document.getElementById("errorMsg").style.display = "block";
+            }
+        }
+
+        function showPanel() {
+            document.getElementById("loginOverlay").style.display = "none";
+            document.getElementById("adminPanel").style.display = "block";
+            loadCurrentData();
+        }
+
+        // Cek apakah sudah login sebelumnya
+        if (sessionStorage.getItem("isAdmin") === "true") {
+            showPanel();
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.reload();
+        }
+
+    // 1. UPDATE LOGO & BACKGROUND
+    async function updateTampilan() {
+        const logoFile = document.getElementById('upLogo').files[0];
+        const bgFile = document.getElementById('upBG').files[0];
+        let updates = {};
+
+        if(logoFile) updates['logo'] = await toBase64(logoFile);
+        if(bgFile) updates['bg'] = await toBase64(bgFile);
+
+        if(Object.keys(updates).length > 0) {
+            db.ref('toko_mas/config').update(updates);
+            alert("Tampilan Berhasil Diperbarui!");
+        } else {
+            alert("Pilih file terlebih dahulu!");
+        }
+    }
+
+    // 2. UPDATE HARGA
+    function updateHarga() {
+        const harga = document.getElementById('hargaEmas').value;
+        if(harga) {
+            db.ref('toko_mas/config').update({ harga: harga });
+            alert("Harga Berhasil Diperbarui!");
+        }
+    }
+
+    // 3. KELOLA PRODUK (CRUD)
+    async function saveProduct() {
+        const key = document.getElementById('editKey').value;
+        const nama = document.getElementById('namaProduk').value;
+        const file = document.getElementById('fotoProduk').files[0];
+        
+        let data = { nama: nama };
+
+        if(file) {
+            data.foto = await toBase64(file);
+        }
+
+        if(key) { // Mode Edit
+            db.ref('toko_mas/produk/' + key).update(data);
+            alert("Produk Diperbarui!");
+        } else { // Mode Tambah
+            if(!file) return alert("Pilih foto untuk produk baru!");
+            db.ref('toko_mas/produk').push(data);
+            alert("Produk Ditambahkan!");
+        }
+        resetForm();
+    }
+
+    db.ref('toko_mas/produk').on('value', (snapshot) => {
+        const listDiv = document.getElementById('listProduk');
+        listDiv.innerHTML = "";
+        snapshot.forEach((child) => {
+            const item = child.val();
+            listDiv.innerHTML += `
+                <div class="product-item">
+                    <img src="${item.foto}">
+                    <div class="info"><strong>${item.nama}</strong></div>
+                    <div>
+                        <button class="btn btn-blue" onclick="editMode('${child.key}', '${item.nama}')">Edit</button>
+                        <button class="btn btn-red" onclick="deleteProduct('${child.key}')">Hapus</button>
+                    </div>
+                </div>`;
+        });
+    });
+
+    function deleteProduct(key) {
+        if(confirm("Hapus produk ini?")) db.ref('toko_mas/produk/' + key).remove();
+    }
+
+    function editMode(key, nama) {
+        document.getElementById('editKey').value = key;
+        document.getElementById('namaProduk').value = nama;
+        document.getElementById('btnSave').innerText = "Update Produk";
+        document.getElementById('btnCancel').style.display = "block";
+    }
+
+    function resetForm() {
+        document.getElementById('editKey').value = "";
+        document.getElementById('namaProduk').value = "";
+        document.getElementById('fotoProduk').value = "";
+        document.getElementById('btnSave').innerText = "Simpan Produk";
+        document.getElementById('btnCancel').style.display = "none";
+    }
+    
+    // ==========================================
+// REGISTER SERVICE WORKER
+// ==========================================
+if ('servic-eWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('/sw.js', {
+        scope: '/'
+      });
+      console.log('[PWA] Service Worker registered:', registration.scope);
+
+      // Auto update setiap 1 jam
+      setInterval(() => {
+        registration.update();
+      }, 60 * 60 * 1000);
+
+      // Detect update
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            showUpdateNotification();
+          }
+        });
+      });
+
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        console.log('[PWA] New service worker activated');
+        window.location.reload();
+      });
+
+    } catch (error) {
+      console.error('[PWA] Service Worker registration failed:', error);
+    }
+  });
+}
+
+// ==========================================
+// CAPTURE INSTALL PROMPT
+// ==========================================
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  console.log('[PWA] Install prompt captured');
+
+  setTimeout(() => {
+    showInstallButton();
+  }, 3000);
+});
+
+// ==========================================
+// TOMBOL INSTALL
+// ==========================================
+function showInstallButton() {
+  const existingBtn = document.getElementById('installBtn');
+  if (existingBtn) return;
+
+  const installBtn = document.createElement('button');
+  installBtn.id = 'installBtn';
+  installBtn.innerHTML = '📲 Install App';
+
+  installBtn.style.cssText = `
+    position: fixed; bottom: 80px; left: 20px; z-index: 1500;
+    background: linear-gradient(135deg, #D4AF37, #AA8C2C);
+    color: #0A0A0A; border: none; padding: 12px 20px; border-radius: 25px;
+    font-weight: 600; font-size: 0.85rem; cursor: pointer;
+    box-shadow: 0 5px 20px rgba(212,175,55,0.4);
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'Poppins', sans-serif;
+  `;
+
+  installBtn.onclick = () => {
+    showInstallOptions();
+  };
+
+  document.body.appendChild(installBtn);
+
+  // Auto hide
+  setTimeout(() => {
+    installBtn.style.opacity = '0';
+    installBtn.style.transform = 'translateY(100px)';
+    installBtn.style.transition = 'all 0.5s ease';
+    setTimeout(() => installBtn.remove(), 500);
+  }, 30000);
+}
+
+// ==========================================
+// MODAL PILIHAN INSTALL
+// ==========================================
+function showInstallOptions() {
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `;
+
+  modal.innerHTML = `
+    <div style="
+      background:#111;
+      padding:20px;
+      border-radius:15px;
+      text-align:center;
+      width:90%;
+      max-width:300px;
+      font-family:'Poppins',sans-serif;
+      color:#fff;
+    ">
+      <h3 style="margin-bottom:15px;">Pilih Instalasi</h3>
+
+      <button id="pwaInstall" style="
+        width:100%; margin-bottom:10px;
+        padding:12px; border:none;
+        border-radius:10px;
+        background:#D4AF37; color:#000;
+        font-weight:bold;
+        cursor:pointer;
+      ">
+        📲 Install Langsung
+      </button>
+
+      <button id="playstoreInstall" style="
+        width:100%;
+        padding:12px;
+        border:none;
+        border-radius:10px;
+        background:#0f9d58;
+        color:#fff;
+        font-weight:bold;
+        cursor:pointer;
+      ">
+        ▶️ Play Store
+      </button>
+
+      <button id="closeModal" style="
+        margin-top:10px;
+        background:none;
+        border:none;
+        color:#aaa;
+        cursor:pointer;
+      ">Tutup</button>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  // INSTALL PWA
+  document.getElementById('pwaInstall').onclick = async () => {
+    if (!deferredPrompt) {
+      showToast('Browser tidak mendukung install langsung');
+      return;
+    }
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+
+    if (outcome === 'accepted') {
+      console.log('[PWA] User accepted install');
+      showToast('Aplikasi berhasil di-install! 🎉');
+    }
+
+    deferredPrompt = null;
+    modal.remove();
+  };
+
+  // PLAY STORE (GANTI LINK INI)
+  document.getElementById('playstoreInstall').onclick = () => {
+    window.open('https://play.google.com/store/apps/details?id=github.qtok.twa', '_blank');
+  };
+
+  // CLOSE
+  document.getElementById('closeModal').onclick = () => {
+    modal.remove();
+  };
+}
+
+// ==========================================
+// STATUS INSTALLED
+// ==========================================
+window.addEventListener('appinstalled', () => {
+  isPWAInstalled = true;
+  console.log('[PWA] App installed');
+  showToast('Terima kasih telah meng-install MERYSA! 💛');
+
+  const installBtn = document.getElementById('installBtn');
+  if (installBtn) installBtn.remove();
+});
+
+// ==========================================
+// UPDATE NOTIFICATION
+// ==========================================
+function showUpdateNotification() {
+  if (confirm('Versi baru tersedia! Refresh untuk update?')) {
+    navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+  }
+}
+
+// ==========================================
+// ONLINE / OFFLINE STATUS
+// ==========================================
+window.addEventListener('online', () => {
+  showToast('Koneksi internet kembali! 🌐');
+});
+
+window.addEventListener('offline', () => {
+  showToast('Mode offline - Data tersimpan di perangkat 📴');
+});
+
+// ==========================================
+// PRECACHE
+// ==========================================
+if ('serviceWorker' in navigator && navigator.onLine) {
+  navigator.serviceWorker.ready.then((registration) => {
+    registration.active.postMessage({
+      type: 'CACHE_URLS',
+      urls: [
+        '/#products',
+        '/#hero'
+      ]
+    });
+  });
+}
+
+console.log('[PWA] Toko Mas Merysa PWA Ready');
+</script>
+</body>
+</html>
