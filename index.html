@@ -148,6 +148,11 @@ padding:12px 20px;
 border-radius:10px;
 display:none;
 }
+#previewRemove{
+border:1px solid rgba(212,175,55,0.3);
+background:#111;
+padding:5px;
+}
 </style>
 </head>
 
@@ -209,6 +214,26 @@ display:none;
 <input type="hidden" id="editVideo">
 <button onclick="saveVideo()">Simpan Video</button>
 <div id="videoList"></div>
+</div>
+
+<!-- 🧼 HAPUS BACKGROUND -->
+<div class="card">
+<h3>🧼 Hapus Background Gambar</h3>
+
+<input type="file" id="bgRemoveFile" accept="image/*">
+
+<button onclick="removeBg()">✨ Hapus Background</button>
+
+<br><br>
+
+<img id="previewRemove" style="max-width:100%;border-radius:10px;display:none;">
+
+<br>
+
+<button id="downloadBtn" style="display:none;margin-top:10px;" onclick="downloadImage()">
+⬇️ Download PNG
+</button>
+
 </div>
 
 </div>
@@ -390,6 +415,60 @@ ${media}
 });
 
 }
+
+const REMOVE_BG_API = "YOUR_API_KEY"; // GANTI
+
+async function removeBg(){
+const file = document.getElementById("bgRemoveFile").files[0];
+
+if(!file){
+showToast("⚠️ Pilih gambar dulu");
+return;
+}
+
+showToast("⏳ Memproses...");
+
+let formData = new FormData();
+formData.append("image_file", file);
+formData.append("size", "auto");
+
+try{
+let res = await fetch("https://api.remove.bg/v1.0/removebg", {
+method:"POST",
+headers:{ "X-Api-Key": REMOVE_BG_API },
+body:formData
+});
+
+if(!res.ok){
+showToast("❌ Gagal hapus background");
+return;
+}
+
+let blob = await res.blob();
+let url = URL.createObjectURL(blob);
+
+let preview = document.getElementById("previewRemove");
+preview.src = url;
+preview.style.display = "block";
+
+document.getElementById("downloadBtn").style.display = "inline-block";
+
+window.bgResult = blob;
+
+showToast("✅ Berhasil");
+
+}catch(e){
+showToast("❌ Error koneksi");
+}
+}
+
+function downloadImage(){
+let a = document.createElement("a");
+a.href = URL.createObjectURL(window.bgResult);
+a.download = "no-bg.png";
+a.click();
+}
+
 ///======================================
 // REGISTER SERVICE WORKER
 // ==========================================
