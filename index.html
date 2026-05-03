@@ -1,730 +1,396 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | Toko Mas Merysa</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merysa Gold Admin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#D4AF37">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    
-    <style>
-        :root {
-            --gold: #D4AF37;
-            --gold-gradient: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
-            --dark: #0a0a0a;
-            --dark-card: #1a1a1a;
-            --text: #ffffff;
-            --text-muted: #b0b0b0;
-            --glass: rgba(255,255,255,0.08);
-            --border: rgba(212,175,55,0.3);
-            --shadow: 0 10px 40px rgba(0,0,0,0.4);
-            --shadow-gold: 0 10px 40px rgba(212,175,55,0.25);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--dark);
-            color: var(--text);
-            min-height: 100vh;
-            padding: 20px;
-            line-height: 1.6;
-        }
+<style>
+:root{
+--gold:#D4AF37;
+--bg:#0a0a0a;
+--card:#141414;
+--border:rgba(212,175,55,0.3);
+--glass:rgba(255,255,255,0.05);
+}
 
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: 
-                radial-gradient(ellipse at 20% 80%, rgba(212,175,55,0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(212,175,55,0.05) 0%, transparent 50%);
-            z-index: -1;
-            pointer-events: none;
-        }
+body{
+font-family:Poppins;
+background:var(--bg);
+color:#fff;
+margin:0;
+}
 
-        /* ===== LOGIN OVERLAY ===== */
-        #loginOverlay {
-            background: var(--dark-card);
-            padding: 40px;
-            border-radius: 25px;
-            border: 1px solid var(--border);
-            text-align: center;
-            box-shadow: var(--shadow-gold);
-            max-width: 450px;
-            margin: 80px auto;
-            backdrop-filter: blur(10px);
-            animation: fadeIn 0.5s ease;
-        }
+/* GOLD EFFECT */
+.gold{
+background:linear-gradient(120deg,#BF953F,#FCF6BA,#B38728,#FBF5B7,#AA771C);
+background-size:300%;
+-webkit-background-clip:text;
+color:transparent;
+animation:shine 5s infinite linear;
+}
+@keyframes shine{0%{background-position:0}100%{background-position:300%}}
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+/* LOGIN */
+#auth{
+position:fixed;inset:0;
+display:flex;justify-content:center;align-items:center;
+background:#000;
+z-index:999;
+}
+.auth-box{
+background:#111;
+padding:40px;
+border-radius:20px;
+text-align:center;
+border:1px solid var(--border);
+}
 
-        #loginOverlay i {
-            font-size: 3.5rem;
-            color: var(--gold);
-            margin-bottom: 20px;
-            animation: pulse 2s ease-in-out infinite;
-        }
+/* HEADER */
+header{
+display:flex;
+justify-content:space-between;
+padding:15px 25px;
+border-bottom:1px solid var(--border);
+background:#050505;
+}
 
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+/* GRID */
+.container{
+padding:20px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+@media(max-width:900px){
+.container{grid-template-columns:1fr}
+}
 
-        #loginOverlay h2 {
-            font-family: 'Playfair Display', serif;
-            color: var(--gold);
-            margin-bottom: 10px;
-            font-size: 1.8rem;
-        }
+/* CARD */
+.card{
+background:var(--card);
+padding:20px;
+border-radius:15px;
+border:1px solid var(--border);
+}
 
-        #loginOverlay p { color: var(--text-muted); margin-bottom: 25px; }
+/* INPUT */
+input,textarea{
+width:100%;
+padding:10px;
+margin-top:10px;
+background:var(--glass);
+border:1px solid var(--border);
+color:#fff;
+border-radius:10px;
+}
 
-        #passInput {
-            width: 100%;
-            padding: 15px 20px;
-            margin: 10px 0 20px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid var(--border);
-            color: white;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
+button{
+margin-top:10px;
+padding:10px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+background:var(--gold);
+}
 
-        #passInput:focus {
-            outline: none;
-            border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(212,175,55,0.2);
-        }
+/* PRODUCT */
+.catalog{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+gap:15px;
+margin-top:15px;
+}
+.product{
+background:#1c1c1c;
+padding:10px;
+border-radius:10px;
+text-align:center;
+}
+.product img{
+width:100%;
+height:120px;
+object-fit:cover;
+border-radius:8px;
+}
 
-        /* ===== BUTTONS ===== */
-        button {
-            background: var(--gold-gradient);
-            color: #0a0a0a;
-            border: none;
-            padding: 14px 28px;
-            font-weight: 600;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 0.95rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            width: 100%;
-            margin-top: 5px;
-        }
+/* VIDEO */
+video,iframe{
+width:100%;
+border-radius:10px;
+margin-top:10px;
+}
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-gold);
-            filter: brightness(1.1);
-        }
+/* PRICE */
+.price-box{
+background:#111;
+padding:15px;
+border-radius:10px;
+margin-bottom:10px;
+border:1px solid var(--border);
+font-size:1.2rem;
+}
 
-        button:active { transform: translateY(0); }
-
-        .btn-red {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            color: white;
-        }
-        
-        .btn-blue {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--gold);
-            color: var(--gold);
-        }
-        
-        .btn-outline:hover {
-            background: var(--gold);
-            color: #0a0a0a;
-        }
-
-        .btn-sm {
-            padding: 8px 16px;
-            font-size: 0.85rem;
-            width: auto;
-            margin: 0 5px;
-        }
-
-        /* ===== ADMIN PANEL ===== */
-        #adminPanel {
-            display: none;
-            max-width: 900px;
-            margin: 0 auto;
-            animation: slideUp 0.5s ease;
-        }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-
-        .header-admin {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .header-admin h3 {
-            font-family: 'Playfair Display', serif;
-            color: var(--gold);
-            font-size: 1.6rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logout-btn {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            color: white;
-            padding: 10px 20px;
-            font-size: 0.85rem;
-            width: auto;
-            border-radius: 10px;
-        }
-
-        /* ===== CARDS ===== */
-        .card {
-            background: var(--dark-card);
-            padding: 25px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            margin-bottom: 25px;
-            backdrop-filter: blur(10px);
-            transition: var(--transition);
-        }
-
-        .card:hover {
-            border-color: var(--gold);
-            box-shadow: var(--shadow-gold);
-        }
-
-        .card h2, .card h3 {
-            color: var(--gold);
-            font-family: 'Playfair Display', serif;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            font-size: 1.4rem;
-        }
-
-        label {
-            display: block;
-            margin: 15px 0 8px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        input[type="password"],
-        input[type="file"],
-        select {
-            width: 100%;
-            padding: 14px 18px;
-            margin: 8px 0;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid var(--border);
-            color: white;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(212,175,55,0.2);
-        }
-
-        input[type="file"] {
-            padding: 10px;
-            background: rgba(255,255,255,0.05);
-        }
-
-        .file-preview {
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .file-preview img,
-        .file-preview video {
-            max-width: 100%;
-            max-height: 200px;
-            border-radius: 12px;
-            border: 2px solid var(--border);
-            margin-top: 10px;
-        }
-
-        /* ===== PRODUCT LIST ===== */
-        .product-item {
-            background: rgba(255,255,255,0.05);
-            padding: 15px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            transition: var(--transition);
-            border: 1px solid transparent;
-        }
-
-        .product-item:hover {
-            border-color: var(--gold);
-            background: rgba(212,175,55,0.08);
-        }
-
-        .product-item .media {
-            width: 70px;
-            height: 70px;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid var(--border);
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0,0,0,0.3);
-        }
-
-        .product-item img,
-        .product-item video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .product-item .info {
-            flex-grow: 1;
-            margin-left: 15px;
-            min-width: 0;
-        }
-
-        .product-item .info strong {
-            display: block;
-            margin-bottom: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .product-item .type-badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 5px;
-        }
-
-        .type-badge.photo { background: rgba(52,152,219,0.2); color: #3498db; }
-        .type-badge.video { background: rgba(231,76,60,0.2); color: #e74c3c; }
-
-        .product-actions {
-            display: flex;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-
-        /* ===== TOAST NOTIFICATION ===== */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--dark-card);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 12px;
-            border-left: 4px solid var(--gold);
-            box-shadow: var(--shadow);
-            z-index: 5000;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
-            max-width: 350px;
-        }
-
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateX(100%); } }
-
-        .toast i { font-size: 1.3rem; color: var(--gold); }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            body { padding: 15px; }
-            #loginOverlay { margin: 40px 15px; padding: 30px 25px; }
-            .header-admin { flex-direction: column; gap: 15px; text-align: center; }
-            .product-item { flex-direction: column; text-align: center; gap: 15px; }
-            .product-item .info { margin-left: 0; }
-            .product-actions { justify-content: center; }
-        }
-    </style>
+/* TOAST */
+.toast{
+position:fixed;
+bottom:20px;right:20px;
+background:var(--gold);
+color:#000;
+padding:12px 20px;
+border-radius:10px;
+display:none;
+}
+</style>
 </head>
+
 <body>
 
-    <!-- LOGIN -->
-    <div id="loginOverlay">
-        <i class="fas fa-user-shield"></i>
-        <h2>Admin Merysa</h2>
-        <p>Masukkan password untuk mengakses panel kontrol</p>
-        <input type="password" id="passInput" placeholder="••••••" maxlength="20">
-        <button onclick="checkLogin()"><i class="fas fa-sign-in-alt"></i> Masuk Sistem</button>
-        <p id="errorMsg" style="color: #ff6b6b; margin-top: 15px; display: none; font-weight: 500;">
-            <i class="fas fa-exclamation-circle"></i> Password Salah!
-        </p>
-    </div>
+<!-- LOGIN -->
+<div id="auth">
+<div class="auth-box">
+<h2 class="gold">🔐 Admin Login</h2>
+<input type="password" id="pass" placeholder="Password">
+<button onclick="login()">Masuk</button>
+<p id="err" style="color:red"></p>
+</div>
+</div>
 
-    <!-- ADMIN PANEL -->
-    <div id="adminPanel">
-        <div class="header-admin">
-            <h3><i class="fas fa-crown"></i> Control Panel</h3>
-            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
-        </div>
-     
-        <div class="card">
-            <h2><i class="fas fa-palette"></i> Tampilan Website</h2>
-            <label><i class="fas fa-image"></i> Ganti Logo Toko:</label>
-            <input type="file" id="upLogo" accept="image/*">
-            <div class="file-preview" id="logoPreview"></div>
-            
-            <label style="margin-top: 20px;"><i class="fas fa-wallpaper"></i> Ganti Background:</label>
-            <input type="file" id="upBG" accept="image/*">
-            <div class="file-preview" id="bgPreview"></div>
-            
-            <button class="btn-gold" onclick="updateTampilan()" style="margin-top: 20px;">
-                <i class="fas fa-save"></i> Simpan Perubahan
-            </button>
-        </div>
+<header>
+<h3 class="gold">👑 Merysa Gold Dashboard</h3>
+<button onclick="logout()">Logout</button>
+</header>
 
-        <div class="card">
-            <h2><i class="fas fa-coins"></i> Harga Emas</h2>
-            <label>Harga Per Gram Hari Ini:</label>
-            <input type="text" id="hargaEmas" placeholder="Contoh: Rp 2.650.000 / gram">
-            <button onclick="updateHarga()" style="margin-top: 15px;">
-                <i class="fas fa-sync-alt"></i> Update Harga
-            </button>
-        </div>
+<div id="app" style="display:none">
 
-        <div class="card">
-            <h3><i class="fas fa-plus-circle"></i> Tambah Produk / Konten</h3>
-            
-            <label>Tipe Konten:</label>
-            <select id="tipeKonten" onchange="toggleMediaInput()">
-                <option value="photo">📷 Foto Produk</option>
-                <option value="video">🎬 Video Gallery</option>
-            </select>
-            
-            <input type="hidden" id="editKey">
-            
-            <label>Nama Produk / Judul:</label>
-            <input type="text" id="namaProduk" placeholder="Contoh: Cincin Berlian 18K">
-            
-            <label id="labelMedia">File Foto:</label>
-            <input type="file" id="mediaFile" accept="image/*,video/*">
-            <div class="file-preview" id="mediaPreview"></div>
-            
-            <label id="labelUrl" style="display: none;">URL Video (Opsional):</label>
-            <input type="text" id="urlVideo" placeholder="https://..." style="display: none;">
-            
-            <label>Harga (Opsional):</label>
-            <input type="text" id="hargaProduk" placeholder="Contoh: Rp 5.500.000">
-            
-            <button id="btnSave" onclick="saveProduct()" style="margin-top: 20px;">
-                <i class="fas fa-save"></i> Simpan Konten
-            </button>
-            <button id="btnCancel" class="btn-outline" style="display:none; margin-top: 10px;" onclick="resetForm()">
-                <i class="fas fa-times"></i> Batal
-            </button>
-        </div>
+<div class="container">
 
-        <div class="card">
-            <h3><i class="fas fa-list"></i> Daftar Konten Aktif</h3>
-            <div id="listProduk" style="max-height: 500px; overflow-y: auto; padding-right: 10px;"></div>
-        </div>
-    </div>
+<!-- HARGA EMAS -->
+<div class="card">
+<h3>💰 Harga Emas</h3>
+<div id="priceView" class="price-box">Memuat...</div>
+<input id="goldPrice" placeholder="Rp 1.250.000 / gram">
+<button onclick="savePrice()">Simpan Harga</button>
+</div>
 
-    <!-- TOAST CONTAINER -->
-    <div id="toastContainer"></div>
+<!-- TAMPILAN -->
+<div class="card">
+<h3>🎨 Tampilan</h3>
+<label>Logo</label>
+<input type="file" id="logoFile">
+<label>Background</label>
+<input type="file" id="bgFile">
+<button onclick="saveConfig()">Simpan Tampilan</button>
+</div>
 
-    <!-- FIREBASE -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<!-- PRODUK -->
+<div class="card">
+<h3>🛍️ Produk</h3>
+<input id="pNama" placeholder="Nama">
+<input id="pHarga" placeholder="Harga">
+<input type="file" id="pFile">
+<input type="hidden" id="editProduk">
+<button onclick="saveProduk()">Simpan Produk</button>
+<div id="produkList" class="catalog"></div>
+</div>
 
-    <script>
-        // ===== KONFIGURASI =====
-        const ADMIN_PASSWORD = "MerysaPekanbaru1986"; // ⚠️ GANTI PASSWORD INI!
-        
-        const firebaseConfig = {
+<!-- VIDEO -->
+<div class="card">
+<h3>🎬 Video</h3>
+<input type="file" id="vFile" accept="video/*">
+<input id="vUrl" placeholder="Link YouTube">
+<input type="hidden" id="editVideo">
+<button onclick="saveVideo()">Simpan Video</button>
+<div id="videoList"></div>
+</div>
+
+</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+const ADMIN_PASSWORD="1986merysa";
+
+const firebaseConfig = {
         apiKey: "AIzaSyCi-CNKPGkeUuc7WBCizkQlLO9DT2cXJAk",
         authDomain: "tokomasmerysa.firebaseapp.com",
         databaseURL: "https://tokomasmerysa-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "tokomasmerysa",
         appId: "1:659517947527:web:4ed83fc9f6206b45ef0222"
-    };
-        
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.database();
+        };
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
 
-        // ===== UTILS =====
-        const toBase64 = file => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-        });
+/* LOGIN */
+function login(){
+if(pass.value===ADMIN_PASSWORD){
+sessionStorage.setItem("admin","1");
+init();
+}else err.innerText="Password salah";
+}
+function logout(){
+sessionStorage.clear();
+location.reload();
+}
+if(sessionStorage.getItem("admin")) init();
 
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-                <span>${message}</span>
-            `;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
+function init(){
+auth.style.display="none";
+app.style.display="block";
+load();
+}
 
-        function previewFile(input, previewId, isVideo = false) {
-            const file = input.files[0];
-            const preview = document.getElementById(previewId);
-            if (!file) { preview.innerHTML = ''; return; }
-            
-            const url = URL.createObjectURL(file);
-            preview.innerHTML = isVideo || file.type.startsWith('video/') 
-                ? `<video src="${url}" controls muted style="max-height: 150px;"></video>`
-                : `<img src="${url}" alt="Preview" style="max-height: 150px;">`;
-        }
+/* BASE64 */
+function toBase64(file){
+return new Promise(r=>{
+let reader=new FileReader();
+reader.onload=()=>r(reader.result);
+reader.readAsDataURL(file);
+});
+}
 
-        // ===== LOGIN LOGIC =====
-        function checkLogin() {
-            const input = document.getElementById("passInput").value;
-            if (input === ADMIN_PASSWORD) {
-                sessionStorage.setItem("isAdmin", "true");
-                showPanel();
-                showToast('Selamat datang, Admin! ✨');
-            } else {
-                document.getElementById("errorMsg").style.display = "block";
-                setTimeout(() => {
-                    document.getElementById("errorMsg").style.display = "none";
-                }, 3000);
-            }
-        }
+/* TOAST */
+function toast(msg){
+toastEl.innerText=msg;
+toastEl.style.display="block";
+setTimeout(()=>toastEl.style.display="none",2000);
+}
 
-        function showPanel() {
-            document.getElementById("loginOverlay").style.display = "none";
-            document.getElementById("adminPanel").style.display = "block";
-            loadCurrentData();
-        }
+/* HARGA */
+function savePrice(){
+db.ref("config").update({price:goldPrice.value});
+toast("Harga disimpan");
+}
+db.ref("config/price").on("value",s=>{
+priceView.innerText=s.val()||"Belum diatur";
+});
 
-        if (sessionStorage.getItem("isAdmin") === "true") {
-            showPanel();
-        }
+/* CONFIG */
+async function saveConfig(){
+let data={};
+if(logoFile.files[0]) data.logo=await toBase64(logoFile.files[0]);
+if(bgFile.files[0]) data.bg=await toBase64(bgFile.files[0]);
+db.ref("config").update(data);
+toast("Tampilan disimpan");
+}
 
-        function logout() {
-            sessionStorage.clear();
-            window.location.reload();
-            showToast('Anda telah logout 👋');
-        }
+/* PRODUK */
+async function saveProduk(){
+let id=editProduk.value;
+let img="";
+if(pFile.files[0]) img=await toBase64(pFile.files[0]);
 
-        // ===== TOGGLE MEDIA INPUT =====
-        function toggleMediaInput() {
-            const tipe = document.getElementById('tipeKonten').value;
-            const isVideo = tipe === 'video';
-            
-            document.getElementById('labelMedia').innerHTML = isVideo ? 
-                '<i class="fas fa-video"></i> File Video:' : 
-                '<i class="fas fa-image"></i> File Foto:';
-            document.getElementById('mediaFile').accept = isVideo ? 'video/*' : 'image/*';
-            
-            document.getElementById('labelUrl').style.display = isVideo ? 'block' : 'none';
-            document.getElementById('urlVideo').style.display = isVideo ? 'block' : 'none';
-        }
+let data={nama:pNama.value,harga:pHarga.value};
+if(img) data.img=img;
 
-        // Preview handler
-        document.getElementById('upLogo').addEventListener('change', (e) => previewFile(e.target, 'logoPreview'));
-        document.getElementById('upBG').addEventListener('change', (e) => previewFile(e.target, 'bgPreview'));
-        document.getElementById('mediaFile').addEventListener('change', (e) => {
-            const isVideo = document.getElementById('tipeKonten').value === 'video';
-            previewFile(e.target, 'mediaPreview', isVideo);
-        });
+if(id){
+db.ref("produk/"+id).update(data);
+}else{
+db.ref("produk").push(data);
+}
 
-        // ===== UPDATE FUNCTIONS =====
-        async function updateTampilan() {
-            const logoFile = document.getElementById('upLogo').files[0];
-            const bgFile = document.getElementById('upBG').files[0];
-            let updates = {};
+pNama.value="";pHarga.value="";
+editProduk.value="";
+toast("Produk disimpan");
+}
 
-            if(logoFile) {
-                showToast('Mengupload logo...');
-                updates['logo'] = await toBase64(logoFile);
-            }
-            if(bgFile) {
-                showToast('Mengupload background...');
-                updates['bg'] = await toBase64(bgFile);
-            }
+function editProdukFn(id,d){
+pNama.value=d.nama;
+pHarga.value=d.harga;
+editProduk.value=id;
+}
 
-            if(Object.keys(updates).length > 0) {
-                await db.ref('toko_mas/config').update(updates);
-                showToast('Tampilan berhasil diperbarui! ✨', 'success');
-            } else {
-                showToast('Pilih file terlebih dahulu!', 'error');
-            }
-        }
+function delProduk(id){
+db.ref("produk/"+id).remove();
+}
 
-        function updateHarga() {
-            const harga = document.getElementById('hargaEmas').value.trim();
-            if(harga) {
-                db.ref('toko_mas/config').update({ harga: harga });
-                showToast('Harga emas berhasil diupdate! 💰');
-            } else {
-                showToast('Masukkan harga terlebih dahulu!', 'error');
-            }
-        }
+/* VIDEO */
+async function saveVideo(){
+let id=editVideo.value;
+let file=vFile.files[0];
+let data={};
 
-        // ===== PRODUCT CRUD =====
-        async function saveProduct() {
-            const key = document.getElementById('editKey').value;
-            const nama = document.getElementById('namaProduk').value.trim();
-            const tipe = document.getElementById('tipeKonten').value;
-            const file = document.getElementById('mediaFile').files[0];
-            const urlVideo = document.getElementById('urlVideo').value.trim();
-            const harga = document.getElementById('hargaProduk').value.trim();
-            
-            if(!nama) return showToast('Nama produk wajib diisi!', 'error');
-            
-            let data = { 
-                nama: nama, 
-                tipe: tipe,
-                harga: harga || null,
-                updated: Date.now()
-            };
+if(file){
+data.file=await toBase64(file);
+}else if(vUrl.value){
+let url=vUrl.value;
+if(url.includes("youtube")){
+let idVid=url.split("v=")[1];
+data.url="https://www.youtube.com/embed/"+idVid;
+}else{
+data.url=url;
+}
+}
 
-            if(urlVideo && tipe === 'video') {
-                data.url_video = urlVideo;
-            }
-            
-            if(file) {
-                showToast('Mengupload media...');
-                data.foto = await toBase64(file); // Base64 untuk demo
-                // ⚠️ Untuk produksi: Gunakan Firebase Storage untuk video besar!
-            } else if (!key && !urlVideo) {
-                return showToast('Pilih file media atau masukkan URL video!', 'error');
-            }
+if(id){
+db.ref("video/"+id).update(data);
+}else{
+db.ref("video").push(data);
+}
 
-            try {
-                if(key) {
-                    await db.ref('toko_mas/produk/' + key).update(data);
-                    showToast('Konten berhasil diperbarui! ✏️');
-                } else {
-                    await db.ref('toko_mas/produk').push(data);
-                    showToast('Konten baru berhasil ditambahkan! 🎉');
-                }
-                resetForm();
-            } catch (error) {
-                console.error(error);
-                showToast('Gagal menyimpan: ' + error.message, 'error');
-            }
-        }
+vFile.value="";vUrl.value="";
+editVideo.value="";
+toast("Video disimpan");
+}
 
-        // ===== LOAD & RENDER PRODUCTS =====
-        function loadCurrentData() {
-            // Load config
-            db.ref('toko_mas/config').once('value').then(snapshot => {
-                const config = snapshot.val();
-                if(config?.harga) document.getElementById('hargaEmas').value = config.harga;
-            });
-            
-            // Load products
-            db.ref('toko_mas/produk').on('value', (snapshot) => {
-                const listDiv = document.getElementById('listProduk');
-                listDiv.innerHTML = "";
-                
-                if(!snapshot.exists()) {
-                    listDiv.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:20px;">Belum ada konten. Tambahkan yang pertama! 🚀</p>';
-                    return;
-                }
-                
-                snapshot.forEach((child) => {
-                    const item = child.val();
-                    const isVideo = item.tipe === 'video' || item.foto?.includes('video') || item.url_video;
-                    const mediaPreview = isVideo 
-                        ? (item.url_video ? `<video src="${item.url_video}" muted style="height:60px; border-radius:8px;"></video>` 
-                                           : `<video src="${item.foto}" muted style="height:60px; border-radius:8px;"></video>`)
-                        : `<img src="${item.foto}" style="height:60px; border-radius:8px; object-fit:cover;">`;
-                    
-                    listDiv.innerHTML += `
-                        <div class="product-item">
-                            <div class="media">${mediaPreview}</div>
-                            <div class="info">
-                                <strong>${item.nama}</strong>
-                                ${item.harga ? `<small style="color:var(--gold)">${item.harga}</small>` : ''}
-                                <span class="type-badge ${isVideo ? 'video' : 'photo'}">
-                                    <i class="fas fa-${isVideo ? 'video' : 'image'}"></i> ${isVideo ? 'Video' : 'Foto'}
-                                </span>
-                            </div>
-                            <div class="product-actions">
-                                <button class="btn-blue btn-sm" onclick="editMode('${child.key}', '${item.nama.replace(/'/g, "\\'")}', '${item.tipe}', '${item.harga || ''}', '${item.url_video || ''}')">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn-red btn-sm" onclick="deleteProduct('${child.key}')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>`;
-                });
-            });
-        }
+function editVideoFn(id,d){
+vUrl.value=d.url||"";
+editVideo.value=id;
+}
 
-        function deleteProduct(key) {
-            if(confirm("Hapus konten ini secara permanen?")) {
-                db.ref('toko_mas/produk/' + key).remove();
-                showToast('Konten berhasil dihapus 🗑️');
-            }
-        }
+function delVideo(id){
+db.ref("video/"+id).remove();
+}
 
-        function editMode(key, nama, tipe, harga, urlVideo) {
-            document.getElementById('editKey').value = key;
-            document.getElementById('namaProduk').value = nama;
-            document.getElementById('tipeKonten').value = tipe;
-            document.getElementById('hargaProduk').value = harga;
-            document.getElementById('urlVideo').value = urlVideo;
-            toggleMediaInput();
-            
-            document.getElementById('btnSave').innerHTML = '<i class="fas fa-sync-alt"></i> Update Konten';
-            document.getElementById('btnCancel').style.display = "block";
-            document.getElementById('labelMedia').scrollIntoView({behavior: 'smooth'});
-        }
+/* LOAD */
+function load(){
 
-        function resetForm() {
-            document.getElementById('editKey').value = "";
-            document.getElementById('namaProduk').value = "";
-            document.getElementById('mediaFile').value = "";
-            document.getElementById('hargaProduk').value = "";
-            document.getElementById('urlVideo').value = "";
-            document.getElementById('mediaPreview').innerHTML = "";
-            document.getElementById('tipeKonten').value = "photo";
-            toggleMediaInput();
-            
-            document.getElementById('btnSave').innerHTML = '<i class="fas fa-save"></i> Simpan Konten';
-            document.getElementById('btnCancel').style.display = "none";
-        }
+db.ref("produk").on("value",s=>{
+produkList.innerHTML="";
+s.forEach(c=>{
+let d=c.val();
+produkList.innerHTML+=`
+<div class="product">
+<img src="${d.img||''}">
+<h4>${d.nama}</h4>
+<p>${d.harga}</p>
+<button onclick='editProdukFn("${c.key}", ${JSON.stringify(d)})'>✏️</button>
+<button onclick='delProduk("${c.key}")'>❌</button>
+</div>`;
+});
+});
 
-        // ===== INIT =====
-        document.addEventListener('DOMContentLoaded', () => {
-            toggleMediaInput();
-        });
-            // ==========================================
+db.ref("video").on("value",s=>{
+videoList.innerHTML="";
+s.forEach(c=>{
+let d=c.val();
+let media=d.file
+? `<video src="${d.file}" controls></video>`
+: `<iframe src="${d.url}"></iframe>`;
+
+videoList.innerHTML+=`
+<div class="card">
+${media}
+<button onclick='editVideoFn("${c.key}", ${JSON.stringify(d)})'>✏️</button>
+<button onclick='delVideo("${c.key}")'>❌</button>
+</div>`;
+});
+});
+
+}
+///======================================
 // REGISTER SERVICE WORKER
 // ==========================================
 if ('servic-eWorker' in navigator) {
@@ -952,6 +618,7 @@ if ('serviceWorker' in navigator && navigator.onLine) {
 }
 
 console.log('[PWA] Toko Mas Merysa PWA Ready');
-    </script>
+</script>
+
 </body>
 </html>
