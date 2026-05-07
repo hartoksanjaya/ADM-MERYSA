@@ -278,7 +278,7 @@ h1{
 // ==========================================
 // 1. LOGIKA OVERLAY UCAPAN (AUTO TRANSISI)
 // ==========================================
-const senders = ["Lutfi", "Dilla", "Atik", "BG Miko", "Kak Rani", "Kak Ica", "BG Megi", "BG Mul"];
+const senders = ["Lutfi", "Dilla", "Atik", "BG Miko", "Kak Rani", "Kak Ica", "BG Megi", "BG Mul", "Bu Ndut", "Bu Yang","Teti", "Ayah Pii", "Ayah Mansur", "Om Kitok", "Pak Ajo", "Pak Sep", "Pak Ilham", "Pak Acik"];
 const display = document.getElementById('name-display');
 const dotsContainer = document.getElementById('dots');
 let idx = 0;
@@ -301,7 +301,7 @@ function rotateName() {
         if(idx >= senders.length) {
             // Pesan penutup otomatis
             display.innerHTML = `<div class="name-card active">
-                <div class="from-label" style="margin-bottom:15px">🎁 Semoga Harimu Menyenangkan</div>
+                <div class="from-label" style="margin-bottom:15px">🎁 SELAMAT ULANG TAHUN FANI FINA FATIH MAK UNIANG</div>
                 <div class="sender-name" style="font-size:2.5rem">🥳 Selamat Merayakan! 🥳</div>
             </div>`;
             dotsContainer.style.display = 'none';
@@ -314,7 +314,7 @@ function rotateName() {
 
         let card = document.createElement('div');
         card.className = 'name-card';
-        card.innerHTML = `<div class="from-label">💝 Dari</div><div class="sender-name">${senders[idx]}</div>`;
+        card.innerHTML = `<div class="from-label">💝 Selamat Ulang Tahun Dari</div><div class="sender-name">${senders[idx]}</div>`;
         display.appendChild(card);
         void card.offsetWidth; // trigger reflow
         card.classList.add('active');
