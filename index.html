@@ -1107,7 +1107,7 @@ body{
 </div>
 
 <!-- MUSIC -->
-<audio id="music" autoplay loop>
+<audio id="music" loop>
   <source src="musik.mp3" type="audio/mpeg">
 </audio>
 
@@ -1260,7 +1260,7 @@ let overlayTimer;
 let countdown = 60;
 
 /* ============================= */
-/* COUNTDOWN AUDIO TICK (BARU) */
+/* COUNTDOWN AUDIO TICK */
 /* ============================= */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -1273,7 +1273,7 @@ function playTick() {
   osc.connect(gain);
   gain.connect(audioCtx.destination);
 
-  osc.type = 'sine'; // Nada lembut "tik"
+  osc.type = 'sine';
   osc.frequency.setValueAtTime(880, audioCtx.currentTime);
   gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
@@ -1342,7 +1342,7 @@ function premiumFirework(){
 setInterval(()=>{ premiumFirework(); },1600);
 
 /* ============================= */
-/* COUNTDOWN */
+/* COUNTDOWN - UTAMA */
 /* ============================= */
 
 function startCountdown(){
@@ -1350,7 +1350,7 @@ function startCountdown(){
     countdown--;
     countSec.textContent = countdown;
 
-    playTick(); // 🔊 BUNYI TIAP DETIK
+    playTick(); // 🔊 BUNYI "TIK" TIAP DETIK
 
     /* FIREWORK */
     premiumFirework();
@@ -1361,7 +1361,7 @@ function startCountdown(){
       { transform:'scale(1)' }
     ],{ duration:400 });
 
-    /* FINISH */
+    /* FINISH COUNTDOWN */
     if(countdown <= 0){
       clearInterval(countdownInterval);
       countSec.textContent = 'GO';
@@ -1377,10 +1377,15 @@ function startCountdown(){
         { transform:'scale(1)' }
       ],{ duration:700 });
 
-      /* HIDE INTRO */
+      /* 🎉 PESTA DIMULAI: Hide intro, mulai overlay, & PLAY MUSIK */
       setTimeout(()=>{
         intro.classList.add('hide');
         startOverlay();
+        
+        // 🔊 MUSIK DIPUTAR TEPAT SAAT PESTA DIMULAI
+        music.play().catch(e => {
+          console.log('Menunggu interaksi user:', e);
+        });
       },1800);
     }
   },1000);
@@ -1407,7 +1412,7 @@ function showNextSender(){
   setTimeout(()=>{
     nameBox.innerHTML = '';
 
-    /* LAST SCREEN */
+    /* LAST SCREEN - Semua pengucap sudah tampil */
     if(senderIndex >= senders.length){
       nameBox.innerHTML = `
       <div class="name-card show">
@@ -1417,11 +1422,11 @@ function showNextSender(){
       dotsBox.style.display = 'none';
       clearInterval(overlayTimer);
 
-      /* OPEN MAIN */
+      /* OPEN MAIN CONTENT */
       setTimeout(()=>{
         overlay.classList.add('hide');
         startTyping();
-        music.play().catch(()=>{});
+        // ❌ JANGAN play musik di sini, sudah diputar di countdown finish
       },2600);
       return;
     }
@@ -1476,7 +1481,7 @@ dan kasih sayang dari keluarga besar.
 }
 
 /* ============================= */
-/* MUSIC CONTROL */
+/* MUSIC CONTROL - TOGGLE ON/OFF */
 /* ============================= */
 
 function toggleMusic(){
@@ -1527,12 +1532,13 @@ function startEnding(){
 setTimeout(()=>{ startEnding(); },240000);
 
 /* ============================= */
-/* AUTO MUSIC & AUDIO UNLOCK */
+/* AUDIO UNLOCK - Klik Pertama */
 /* ============================= */
 
 document.body.addEventListener('click', ()=>{
-  music.play().catch(()=>{});
-  if(audioCtx.state === 'suspended') audioCtx.resume(); // 🔓 Buka audio browser
+  // 🔓 Unlock AudioContext agar tick & musik bisa jalan
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+  // ❌ JANGAN play musik di sini, biar otomatis saat countdown finish
 }, { once:true });
 
 </script>
