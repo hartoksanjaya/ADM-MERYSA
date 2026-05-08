@@ -1510,7 +1510,24 @@ document.querySelectorAll('.card').forEach(card=>{
   card.addEventListener('mouseleave', ()=>{ card.style.transform=''; });
 });
 
+/* ============================= */
+/* ENDING CINEMATIC */
+/* ============================= */
 
+function startEnding(){
+  endingScreen.classList.add('show');
+  let volume = music.volume;
+  const fadeOut = setInterval(()=>{
+    if(volume > .05){
+      volume -= .05;
+      music.volume = volume;
+    }else{
+      music.pause();
+      clearInterval(fadeOut);
+    }
+  },300);
+}
+  
 
 /* ============================= */
 /* AUDIO UNLOCK - Klik Pertama */
